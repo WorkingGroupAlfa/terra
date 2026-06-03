@@ -1,5 +1,6 @@
 import React, { useMemo, useState, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
+import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   ArrowRight, CalendarCheck, ChevronDown,
@@ -312,32 +313,35 @@ function Header({ lang, setLang, t }) {
         <button className="menu-button" onClick={() => setMenuOpen(true)} aria-label="Menu"><Menu /></button>
       </div>
 
-      <AnimatePresence>
-        {menuOpen && (
-          <motion.div
-            className="mobile-menu"
-            initial={{ opacity: 0, x: '100%' }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: '100%' }}
-            transition={{ duration: 0.28, ease: 'easeInOut' }}
-          >
-            <button className="close" onClick={() => setMenuOpen(false)}><X /></button>
-            {t.nav.map((item, i) => (
-              <a key={item} href={navLinks[i]} onClick={() => setMenuOpen(false)}>{item}</a>
-            ))}
-            <div className="mobile-langs">
-              {Object.keys(copy).map(key => (
-                <button key={key} className={lang === key ? 'active' : ''} onClick={() => { setLang(key); setMenuOpen(false); }}>
-                  {copy[key].code}
-                </button>
+      {createPortal(
+        <AnimatePresence>
+          {menuOpen && (
+            <motion.div
+              className="mobile-menu"
+              initial={{ opacity: 0, x: '100%' }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: '100%' }}
+              transition={{ duration: 0.28, ease: 'easeInOut' }}
+            >
+              <button className="close" onClick={() => setMenuOpen(false)}><X /></button>
+              {t.nav.map((item, i) => (
+                <a key={item} href={navLinks[i]} onClick={() => setMenuOpen(false)}>{item}</a>
               ))}
-            </div>
-            <a className="primary" href="#contact" onClick={() => setMenuOpen(false)}>
-              {t.cta} <ArrowRight size={18} />
-            </a>
-          </motion.div>
-        )}
-      </AnimatePresence>
+              <div className="mobile-langs">
+                {Object.keys(copy).map(key => (
+                  <button key={key} className={lang === key ? 'active' : ''} onClick={() => { setLang(key); setMenuOpen(false); }}>
+                    {copy[key].code}
+                  </button>
+                ))}
+              </div>
+              <a className="primary" href="#contact" onClick={() => setMenuOpen(false)}>
+                {t.cta} <ArrowRight size={18} />
+              </a>
+            </motion.div>
+          )}
+        </AnimatePresence>,
+        document.body
+      )}
     </header>
   );
 }
