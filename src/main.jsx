@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useMemo, useState, useEffect, useRef } from 'react';
 import { createRoot } from 'react-dom/client';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -288,6 +288,80 @@ function AccordionItem({ title, body }) {
   );
 }
 
+function ServiceDropdown({ label, value, options, onChange }) {
+  const [open, setOpen] = useState(false);
+  const rootRef = useRef(null);
+  const selected = options.includes(value) ? value : options[0];
+
+  useEffect(() => {
+    if (!open) return undefined;
+
+    function closeOnOutsideClick(event) {
+      if (!rootRef.current?.contains(event.target)) setOpen(false);
+    }
+
+    document.addEventListener('pointerdown', closeOnOutsideClick);
+    return () => document.removeEventListener('pointerdown', closeOnOutsideClick);
+  }, [open]);
+
+  useEffect(() => {
+    setOpen(false);
+  }, [options]);
+
+  return (
+    <label className="service-select-label">
+      {label}
+      <div className={`service-select${open ? ' open' : ''}`} ref={rootRef}>
+        <button
+          type="button"
+          className="service-select-trigger"
+          aria-haspopup="listbox"
+          aria-expanded={open}
+          onClick={() => setOpen(current => !current)}
+          onKeyDown={event => {
+            if (event.key === 'Escape') setOpen(false);
+            if (event.key === 'ArrowDown' || event.key === 'Enter' || event.key === ' ') {
+              event.preventDefault();
+              setOpen(true);
+            }
+          }}
+        >
+          <span>{selected}</span>
+          <ChevronDown size={18} />
+        </button>
+        <AnimatePresence initial={false}>
+          {open && (
+            <motion.div
+              className="service-select-menu"
+              role="listbox"
+              initial={{ opacity: 0, y: -6 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -6 }}
+              transition={{ duration: 0.18, ease: 'easeOut' }}
+            >
+              {options.map(option => (
+                <button
+                  key={option}
+                  type="button"
+                  role="option"
+                  aria-selected={option === selected}
+                  className={option === selected ? 'selected' : ''}
+                  onClick={() => {
+                    onChange(option);
+                    setOpen(false);
+                  }}
+                >
+                  {option}
+                </button>
+              ))}
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+    </label>
+  );
+}
+
 // ── Header ─────────────────────────────────────────────────────────────────
 function Header({ lang, setLang, t }) {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -429,7 +503,7 @@ function Solutions({ t }) {
           const Icon = icons[i];
           return (
             <motion.article
-              key={title}
+              key={`service-${i}`}
               className="service-card"
               variants={fadeUp}
               whileHover={{ y: -6, transition: { duration: 0.2 } }}
@@ -462,8 +536,8 @@ function ConversionBlock({ t }) {
           <p className="conversion-sub">{t.valueText}</p>
         </motion.div>
         <motion.div className="accordion-list" variants={stagger}>
-          {t.valueItems.map(([title, body]) => (
-            <motion.div key={title} variants={fadeUp}>
+          {t.valueItems.map(([title, body], i) => (
+            <motion.div key={`value-${i}`} variants={fadeUp}>
               <AccordionItem title={title} body={body} />
             </motion.div>
           ))}
@@ -487,7 +561,7 @@ function Process({ t }) {
       <motion.h2 variants={fadeUp}>{t.processTitle}</motion.h2>
       <div className="process-grid">
         {t.process.map(([title, text], i) => (
-          <motion.div key={title} className="process-card" variants={fadeUp}>
+          <motion.div key={`process-${i}`} className="process-card" variants={fadeUp}>
             <span className="step">0{i + 1}</span>
             <h3>{title}</h3>
             <p>{text}</p>
@@ -504,6 +578,14 @@ function LeadForm({ t, lang }) {
   const [form, setForm] = useState({ name: '', phone: '', service: t.services[0], message: '', consent: false });
 
   function update(key, value) { setForm(c => ({ ...c, [key]: value })); }
+
+  useEffect(() => {
+    setForm(current => (
+      t.services.includes(current.service)
+        ? current
+        : { ...current, service: t.services[0] }
+    ));
+  }, [t.services]);
 
   function submit(e) {
     e.preventDefault();
@@ -538,11 +620,12 @@ function LeadForm({ t, lang }) {
           <label>{t.labels.name}<input required value={form.name} onChange={e => update('name', e.target.value)} /></label>
           <label>{t.labels.phone}<input required type="tel" value={form.phone} onChange={e => update('phone', e.target.value)} /></label>
         </div>
-        <label>{t.labels.service}
-          <select value={form.service} onChange={e => update('service', e.target.value)}>
-            {t.services.map(s => <option key={s}>{s}</option>)}
-          </select>
-        </label>
+        <ServiceDropdown
+          label={t.labels.service}
+          value={form.service}
+          options={t.services}
+          onChange={value => update('service', value)}
+        />
         <label>{t.labels.message}<textarea rows="3" value={form.message} onChange={e => update('message', e.target.value)} /></label>
         <label className="consent">
           <input type="checkbox" checked={form.consent} onChange={e => update('consent', e.target.checked)} />
