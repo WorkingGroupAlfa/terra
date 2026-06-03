@@ -2,7 +2,7 @@ import React, { useMemo, useState, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  ArrowRight, CalendarCheck, CheckCircle2, ChevronDown,
+  ArrowRight, CalendarCheck, ChevronDown,
   Flame, Leaf, Mail, Menu, Phone, ShieldCheck,
   Sprout, SunMedium, Wind, X, Zap,
 } from 'lucide-react';
@@ -23,7 +23,7 @@ const copy = {
     heroBtn: 'Get a free assessment',
     heroGhost: 'See solutions',
     proof1: 'Free consultation',
-    proof2: 'EN · RU · UA · SK · DE',
+    proof2: 'EN · UA · SK · DE',
     proof3: 'Homes & businesses',
     heroPanelText: 'potential energy savings after optimisation*',
     introTitle: 'Energy upgrades that feel simple from day one.',
@@ -65,56 +65,6 @@ const copy = {
     export: 'Export CSV',
     clear: 'Clear all',
   },
-  ru: {
-    code: 'RU',
-    nav: ['О нас', 'Решения', 'Как работает', 'Контакты'],
-    cta: 'Консультация',
-    heroKicker: 'Тёплый воздух · Зелёная энергетика · Европа',
-    heroTitle: 'Чистое тепло.\nМеньше счетов.\nЛучшая энергия.',
-    heroText: 'Terra Energia проектирует системы тёплого воздуха и возобновляемой энергии для домов и бизнеса — реальный комфорт, без лишних затрат.',
-    heroBtn: 'Бесплатная оценка',
-    heroGhost: 'Смотреть решения',
-
-    heroPanelText: 'потенциальная экономия энергии после оптимизации*',
-    introTitle: 'Простая и понятная модернизация с первого звонка.',
-    introText: 'Изучаем объект, рассчитываем систему, объясняем варианты без жаргона и помогаем перейти к эффективному отоплению.',
-    cards: [
-      ['Системы тёплого воздуха', 'Эффективное отопление и вентиляция с фокусом на комфорт и снижение потерь.'],
-      ['Зелёная энергия', 'Солнечные, ветровые и гибридные решения под реальные объекты и бюджеты.'],
-      ['Энергоаудит', 'Честная оценка теплопотерь, расхода и потенциала модернизации.'],
-      ['Коммерческие проекты', 'Надёжный климат-контроль для офисов, магазинов, мастерских и HoReCa.'],
-    ],
-    valueTitle: 'Почему выбирают Terra Energia?',
-    valueText: 'От первой консультации до монтажа — делаем современное отопление понятным, простым и выгодным.',
-    valueItems: [
-      ['До 37% экономии на отоплении', 'Правильно спроектированные системы тёплого воздуха и зелёной энергии снижают затраты на отопление до 37%. Окупаемость — 4–7 лет.'],
-      ['Быстрый и чистый монтаж', 'Большинство систем монтируется за 1–3 дня без тяжёлых строительных работ. Объект остаётся чистым, распорядок не нарушается.'],
-      ['Сертифицированное европейское оборудование', 'Работаем только с проверенными поставщиками и компонентами, соответствующими стандартам ЕС.'],
-      ['Бесплатная консультация, без обязательств', 'Оцениваем объект, рассчитываем систему и представляем понятное предложение — без давления и обязательств.'],
-    ],
-    processTitle: 'Как это работает',
-    process: [
-      ['Заявка', 'Отправляете детали объекта, фото или вопрос через форму.'],
-      ['Оценка', 'Изучаем цели, текущее отопление, утепление и энергетический потенциал.'],
-      ['Предложение', 'Получаете понятное решение с шагами и ожидаемой экономией.'],
-      ['Монтаж', 'Координируем сроки, поставки и техническую подготовку.'],
-    ],
-    formTitle: 'Бесплатная оценка объекта',
-    formText: 'Оставьте контакт — перезвоним и договоримся об удобном времени.',
-    labels: { name: 'Имя', phone: 'Телефон', service: 'Услуга', message: 'Детали (необязательно)', consent: 'Я согласен/согласна на связь по заявке.' },
-    services: ['Система тёплого воздуха', 'Консультация по зелёной энергии', 'Энергоаудит', 'Коммерческий объект', 'Другое'],
-    submit: 'Отправить заявку',
-    success: '✓ Заявка принята — скоро свяжемся.',
-    footer: 'Тёплый воздух и зелёная энергия для чистого будущего.',
-    adminTitle: 'Админка Terra Energia',
-    password: 'Пароль',
-    unlock: 'Открыть',
-    logout: 'Выйти',
-    records: 'Заявки',
-    empty: 'Пока нет заявок.',
-    export: 'Экспорт CSV',
-    clear: 'Очистить',
-  },
   ua: {
     code: 'UA',
     nav: ['Про нас', 'Рішення', 'Як працює', 'Контакти'],
@@ -125,7 +75,7 @@ const copy = {
     heroBtn: 'Безкоштовна оцінка',
     heroGhost: 'Дивитися рішення',
     proof1: 'Безкоштовна консультація',
-    proof2: 'EN · RU · UA · SK · DE',
+    proof2: 'EN · UA · SK · DE',
     proof3: 'Будинки та бізнес',
     heroPanelText: 'потенційна економія енергії після оптимізації*',
     introTitle: 'Проста й зрозуміла модернізація з першої розмови.',
@@ -177,7 +127,7 @@ const copy = {
     heroBtn: 'Bezplatné posúdenie',
     heroGhost: 'Pozrieť riešenia',
     proof1: 'Bezplatná konzultácia',
-    proof2: 'EN · RU · UA · SK · DE',
+    proof2: 'EN · UA · SK · DE',
     proof3: 'Domy aj firmy',
     heroPanelText: 'potenciálna úspora energie po optimalizácii*',
     introTitle: 'Energetická modernizácia jednoducho od prvého kontaktu.',
@@ -229,7 +179,7 @@ const copy = {
     heroBtn: 'Kostenlose Einschätzung',
     heroGhost: 'Lösungen ansehen',
     proof1: 'Kostenlose Beratung',
-    proof2: 'EN · RU · UA · SK · DE',
+    proof2: 'EN · UA · SK · DE',
     proof3: 'Privat & Gewerbe',
     heroPanelText: 'potenzielle Energieeinsparung nach Optimierung*',
     introTitle: 'Energie-Modernisierung, die ab dem ersten Gespräch klar ist.',
@@ -423,7 +373,7 @@ function Hero({ t }) {
           transition={{ delay: 0.55, duration: 0.5 }}
         >
           {[t.proof1, t.proof2, t.proof3].map(item => (
-            <span key={item}><CheckCircle2 size={15} /> {item}</span>
+            <span key={item}>{item}</span>
           ))}
         </motion.div>
       </motion.div>
@@ -699,7 +649,7 @@ function Footer({ t }) {
 // ── App ────────────────────────────────────────────────────────────────────
 function App() {
   const browserLang = navigator.language?.slice(0, 2);
-  const [lang, setLang] = useState(['ru', 'uk', 'de', 'sk'].includes(browserLang) ? (browserLang === 'uk' ? 'ua' : browserLang) : 'en');
+  const [lang, setLang] = useState(['uk', 'de', 'sk'].includes(browserLang) ? (browserLang === 'uk' ? 'ua' : browserLang) : 'en');
   const [adminOpen, setAdminOpen] = useState(false);
   const t = useMemo(() => copy[lang], [lang]);
 
