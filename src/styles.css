@@ -413,6 +413,8 @@ input:focus, textarea:focus { border-color: var(--forest-2); box-shadow: 0 0 0 4
   .brand-mark { width: 32px; height: 32px; }
   h1 { font-size: 44px; letter-spacing: -.06em; }
   h2 { font-size: 36px; }
+  .hero { flex-direction: column; min-height: unset; padding-bottom: 56px; gap: 0; }
+  .hero-panel { position: static; width: min(240px, 100%); margin-top: 32px; }
   .hero-buttons { flex-direction: column; }
   .secondary { background: rgba(255,255,255,.88); color: var(--forest); }
   .cards-grid, .process-grid, .two-col { grid-template-columns: 1fr; }
