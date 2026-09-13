@@ -162,14 +162,54 @@
 
   const video = $('[data-hero-video]');
   const muteBtn = $('[data-action="mute"]');
+  const fullBtn = $('[data-action="fullscreen"]');
   if (video && muteBtn) {
+    const play = () => { const p = video.play && video.play(); if (p && p.catch) p.catch(() => {}); };
     video.muted = true;
-    const playing = video.play && video.play();
-    if (playing && playing.catch) playing.catch(() => {});
-    muteBtn.addEventListener('click', () => {
-      video.muted = !video.muted;
-      muteBtn.textContent = video.muted ? 'Unmute' : 'Mute';
-    });
+    play();
+
+    // The native player's own volume control can change this too
+    const syncMute = () => { muteBtn.textContent = video.muted ? 'Unmute' : 'Mute'; };
+    muteBtn.addEventListener('click', () => { video.muted = !video.muted; });
+    video.addEventListener('volumechange', syncMute);
+
+    // Full screen in each platform's own player: the Fullscreen API with native controls on
+    // desktop and Android, the built-in iOS player on iPhone (no element full screen there).
+    const fsElement = () => document.fullscreenElement || document.webkitFullscreenElement;
+    const elementFs = (document.fullscreenEnabled || document.webkitFullscreenEnabled) &&
+      (video.requestFullscreen || video.webkitRequestFullscreen);
+    const iosFs = typeof video.webkitEnterFullscreen === 'function';
+
+    const enterIosFs = () => {
+      try { video.webkitEnterFullscreen(); }
+      catch (e) { video.addEventListener('loadedmetadata', () => { try { video.webkitEnterFullscreen(); } catch (_) {} }, { once: true }); }
+    };
+
+    const openFullscreen = () => {
+      if (fsElement()) return;
+      if (video.paused) play();
+      if (elementFs) {
+        video.controls = true;
+        const req = video.requestFullscreen ? video.requestFullscreen() : video.webkitRequestFullscreen();
+        if (req && req.catch) req.catch(() => { video.controls = false; if (iosFs) enterIosFs(); });
+      } else {
+        enterIosFs();
+      }
+    };
+
+    // Back inline: hide native controls again and keep the loop running
+    const onExit = () => { video.controls = false; syncMute(); play(); };
+    const onFsChange = () => { if (!fsElement()) onExit(); };
+    document.addEventListener('fullscreenchange', onFsChange);
+    document.addEventListener('webkitfullscreenchange', onFsChange);
+    video.addEventListener('webkitendfullscreen', onExit);
+
+    if (fullBtn && (elementFs || iosFs)) {
+      fullBtn.hidden = false;
+      fullBtn.addEventListener('click', openFullscreen);
+      video.parentElement.classList.add('can-fullscreen');
+      video.addEventListener('click', () => { if (!fsElement()) openFullscreen(); });
+    }
   }
 
   /* ---------- FAQ ---------- */

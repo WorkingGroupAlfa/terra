@@ -20,6 +20,9 @@
   --hair: rgba(237, 232, 222, 0.14);
   --tint: rgba(237, 232, 222, 0.15);
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  /* Centre of the left pipe run. js/pipeworld.js overwrites this with the exact value it
+     draws the pipe at; these CSS versions of the same formula only cover the first paint. */
+  --pipe-x: calc(min(60px, max(10px, 2.5vw)) + 22px);
 }
 
 /* ---------- Base ---------- */
@@ -144,6 +147,10 @@ input, select, button, textarea { font-family: 'Archivo', sans-serif; }
 /* ---------- Sticky quote bar ---------- */
 
 .quote-bar {
+  --bar-border: 1px;
+  --bar-logo: 44px;
+  /* Width of the visible drop: it covers 774 of the image's 1254 px, centred */
+  --bar-logo-ink: calc(var(--bar-logo) * 0.6172);
   position: fixed;
   top: 0;
   left: 0;
@@ -153,7 +160,7 @@ input, select, button, textarea { font-family: 'Archivo', sans-serif; }
   opacity: 0;
   pointer-events: none;
   background: var(--navy);
-  border: 1px solid var(--line);
+  border: var(--bar-border) solid var(--line);
   border-top: none;
   padding-top: env(safe-area-inset-top);
   will-change: transform;
@@ -165,7 +172,7 @@ input, select, button, textarea { font-family: 'Archivo', sans-serif; }
   align-items: center;
   justify-content: space-between;
   gap: 14px;
-  padding: 0 16px;
+  padding: 0 16px 0 0;
   background: none;
   border: none;
   border-radius: 0;
@@ -173,7 +180,15 @@ input, select, button, textarea { font-family: 'Archivo', sans-serif; }
   cursor: pointer;
 }
 .quote-bar__brand { display: flex; align-items: center; gap: 12px; min-width: 0; }
-.quote-bar__logo { height: 44px; width: auto; flex-shrink: 0; }
+/* Logo centred on the pipe below: --pipe-x is measured from the viewport edge, the bar's
+   content starts after its left border. The drop is centred in the image, so its middle
+   is the image's middle. */
+.quote-bar__logo {
+  width: var(--bar-logo);
+  height: var(--bar-logo);
+  flex-shrink: 0;
+  margin-left: calc(var(--pipe-x) - var(--bar-logo) / 2 - var(--bar-border));
+}
 .quote-bar__name {
   font-size: 12px;
   font-weight: 500;
@@ -422,11 +437,24 @@ input, select, button, textarea { font-family: 'Archivo', sans-serif; }
   height: 100%;
   object-fit: cover;
 }
-.hero-video__mute {
+.hero-video__frame.can-fullscreen video { cursor: pointer; }
+/* Full screen shows the whole frame, letterboxed (separate rules: an unknown pseudo-class would drop the pair) */
+.hero-video__frame video:fullscreen { object-fit: contain; background: #000; }
+.hero-video__frame video:-webkit-full-screen { object-fit: contain; background: #000; }
+.hero-video__controls {
   position: absolute;
   top: 10px;
   right: 10px;
-  padding: 9px 16px;
+  display: flex;
+  gap: 8px;
+}
+.hero-video__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 34px;
+  box-sizing: border-box;
+  padding: 0 16px;
   background: rgba(19, 37, 56, 0.6);
   border: 1px solid var(--cream);
   border-radius: 0;
@@ -437,7 +465,9 @@ input, select, button, textarea { font-family: 'Archivo', sans-serif; }
   text-transform: uppercase;
   cursor: pointer;
 }
-.hero-video__mute:hover { background: var(--tint); }
+.hero-video__btn:hover { background: var(--tint); }
+.hero-video__btn--icon { width: 34px; padding: 0; }
+.hero-video__btn--icon svg { width: 16px; height: 16px; }
 .hero-video__caption {
   margin: 10px 2px 0;
   font-size: 11px;
@@ -612,6 +642,18 @@ input, select, button, textarea { font-family: 'Archivo', sans-serif; }
 .review__text { margin: 0; color: #3C4043; font-size: 14px; line-height: 1.5; }
 .review__more { color: #1A73E8; font-size: 12px; }
 .review:hover .review__more { text-decoration: underline; }
+.review--facebook .review__more { color: #1877F2; }
+.review__recommends {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #65676B;
+  font-size: 13px;
+  line-height: 16px;
+}
+.review__recommends svg { width: 16px; height: 16px; flex-shrink: 0; fill: #1877F2; }
+.reviews__stack { display: flex; flex-direction: column; gap: 20px; align-self: start; min-width: 0; }
+.reviews__stack > .review { align-self: stretch; }
 .proof__more { display: flex; justify-content: center; margin-top: 18px; }
 .proof__more button {
   padding: 8px;
@@ -691,15 +733,17 @@ input, select, button, textarea { font-family: 'Archivo', sans-serif; }
   opacity: 0.2;
   pointer-events: none;
 }
+/* The tap sits on the end of the pipe: its centre is x=22 in the 220-wide viewBox,
+   so 22px at full size and 15px (22 × 150/220) in the smaller mobile scene */
 .footer__mouse {
   position: absolute;
   top: 0;
-  left: clamp(10px, 2.5vw, 60px);
+  left: calc(var(--pipe-x) - 22px);
   width: 230px;
   pointer-events: none;
 }
 .footer__mouse svg { display: block; width: 220px; height: 135px; overflow: visible; }
-.footer__mouse--mobile { left: 1px; width: 160px; }
+.footer__mouse--mobile { left: calc(var(--pipe-x) - 15px); width: 160px; }
 .footer__mouse--mobile svg { width: 150px; height: 92px; }
 .footer__inner { max-width: 1040px; margin: 0 auto; }
 .footer__rule { border-top: 1px solid var(--hair); margin-bottom: 32px; }
@@ -711,8 +755,10 @@ input, select, button, textarea { font-family: 'Archivo', sans-serif; }
   justify-items: start;
   text-align: left;
 }
+/* Logo centred over the "Est." line; as a flex item it loses the inline baseline gap, so the margin carries all 13px */
+.footer__brand { display: flex; flex-direction: column; align-items: center; }
 .footer__logo { width: 120px; height: auto; }
-.footer__est { margin-top: 10px; }
+.footer__est { margin-top: 13px; }
 .footer__label { margin-bottom: 4px; }
 .footer__contact { font-size: 14px; line-height: 1.9; }
 .footer__tel,
@@ -831,10 +877,20 @@ input, select, button, textarea { font-family: 'Archivo', sans-serif; }
 
 @media (min-width: 900px) {
   .mobile-only { display: none !important; }
+
+  /* Mirror the logo: the button ends as far from the right edge as the visible drop starts from the left */
+  .quote-bar__btn { padding-right: calc(var(--pipe-x) - var(--bar-logo-ink) / 2 - var(--bar-border)); }
 }
 
 @media (max-width: 899px) {
+  :root { --pipe-x: 24px; }
   .desktop-only { display: none !important; }
+
+  /* Text starts 24px right of the pipe axis, clearing the flanges (±11px) with room to spare */
+  .section,
+  .footer { padding-left: max(calc(var(--pipe-x) + 24px), 7vw); }
+
+  .quote-bar__name { display: none; }
 
   .hero__bg img { object-position: 72% 28%; }
   .hero__logo { width: 64px; }

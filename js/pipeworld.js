@@ -41,10 +41,26 @@
     d: d, fill: 'none', stroke: stroke, 'stroke-width': w, 'stroke-linecap': 'butt', 'stroke-linejoin': 'round'
   }, attrs || {}));
 
+  const pageMargin = (vw) => Math.min(60, Math.max(10, vw * 0.025));
+
+  // Centre line of the left pipe run, in px from the viewport's left edge
+  const leftPipeX = (vw, mobile) => (mobile ? 24 : pageMargin(vw) + 22);
+
+  // Shared with CSS as --pipe-x: the sticky bar logo, the footer tap and the mobile text
+  // offset are all positioned from it
+  let publishedPipeX = '';
+  function publishPipeX(vw, mobile) {
+    const value = leftPipeX(vw, mobile) + 'px';
+    if (value === publishedPipeX) return;
+    publishedPipeX = value;
+    document.documentElement.style.setProperty('--pipe-x', value);
+  }
+
   function build() {
     const vw = document.documentElement.clientWidth;
     const docH = document.body.scrollHeight;
     const m = mobileMq.matches;
+    publishPipeX(vw, m);
     const key = vw + ':' + docH + ':' + (m ? 'm' : 'd');
     if (layoutKey === key) return;
 
@@ -69,8 +85,8 @@
     // Dimensions
     const S = m ? 0.75 : 1;
     const OW = 15 * S, IW = 11.6 * S, EW = 8.6 * S, EI = 7 * S, WW = 8 * S;
-    const margin = Math.min(60, Math.max(10, vw * 0.025));
-    const XL = m ? 17 : margin + 22;      // left run, lines up with the footer tap
+    const margin = pageMargin(vw);
+    const XL = leftPipeX(vw, m);          // left run, lines up with the footer tap and the bar logo
     const XR = vw - margin - 22;          // right run (desktop only)
     const yStart = pg(hero).bottom;
     const crossEl = document.querySelector('[data-zone="cross"]');
