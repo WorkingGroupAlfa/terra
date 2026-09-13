@@ -1,46 +1,34 @@
-# Terra Energia Landing
+# Creekside Plumbing & Gas
 
-A conversion-focused multilingual landing page inspired by bau-kh.de structure, adapted for warm air systems and green energy.
+Static website built with HTML, CSS and JavaScript. Includes a quote wizard,
+job application form, project gallery, reviews, FAQ and privacy policy.
 
-## Features
+## Local preview
 
-- React + Vite static site, deployable to Vercel
-- Languages: English, Russian, Ukrainian, Slovak, German
-- Mobile-first layout for TikTok / Instagram / Facebook / Google traffic
-- Alpine wind-turbine hero background
-- Contact and booking form
-- Demo admin panel for form records
-- CSV export
-
-## Run locally
-
-```bash
-npm install
-npm run dev
-```
-
-## Build
-
-```bash
-npm run build
-```
+Run `python -m http.server 3000` from the project root, then open
+http://localhost:3000. No dependency installation or build is required.
 
 ## Deploy to Vercel
 
-1. Upload this folder to GitHub.
-2. Import repository in Vercel.
-3. Framework preset: Vite.
-4. Build command: `npm run build`.
-5. Output directory: `dist`.
+Import `WorkingGroupAlfa/terra` and use the repository root as the Root Directory.
+The production branch is `master`.
 
-## Admin
+`vercel.json` selects the Other framework preset, skips dependency installation
+and building, and serves files directly from the repository root. It overrides
+the previous site's Vite build settings.
 
-Click `Admin` in the header/footer.
+The main page is `/`; the privacy policy is `/privacy.html`.
 
-Demo password:
+## Configuration still needed
 
-```txt
-terra-admin-2026
-```
+- **Form delivery:** `LEAD_ENDPOINT` in `js/ui.js` is empty. Both forms currently
+  display a success message without delivering a request. Connect a real
+  endpoint, validate inputs and handle the server response before accepting leads.
+- **Analytics:** GA4 and Google Ads identifiers in `js/analytics.js` are empty.
+- **Business details:** replace `CLIENT TO CONFIRM` placeholders in the FAQ and
+  the matching JSON-LD in `index.html` with confirmed details.
+- **Production domain:** canonical URLs, Open Graph metadata, structured data,
+  `robots.txt` and `sitemap.xml` currently use `https://creeksideplumbing.com.au`.
 
-Important: this version stores form records in the browser localStorage for a fast demo. For production, connect the form to Supabase, Airtable, Google Sheets, Vercel KV, or your CRM API so leads are visible across devices and never lost.
+Fonts and GSAP load from external providers. Images and video are stored locally
+in `assets/`.
