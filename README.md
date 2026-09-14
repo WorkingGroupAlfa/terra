@@ -1,7 +1,11 @@
 # Creekside Plumbing & Gas
 
 Static website built with HTML, CSS and JavaScript. Includes a quote wizard,
-job application form, project gallery, reviews, FAQ and privacy policy.
+job application form, two-page project gallery (finished jobs and the crew at
+work), reviews, FAQ and privacy policy.
+
+Gallery photos are `assets/w1-w18.webp` (w4 and w8 are no longer used). The camera
+originals for w9-w18 live in `new images/`, which is git-ignored and not part of the deploy.
 
 ## Local preview
 

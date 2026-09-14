@@ -535,12 +535,23 @@ input, select, button, textarea { font-family: 'Archivo', sans-serif; }
 
 /* Our works */
 
-.works .section__title { max-width: 640px; margin-bottom: 40px; }
+.works__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: 20px 40px;
+  margin-bottom: 40px;
+}
+.works .section__title { max-width: 640px; }
 .works-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(42vw, 240px), 1fr));
+  /* 4 columns: two 2x2 photos, six 1x1 and the 2x1 quote tile fill four rows exactly.
+     3 columns from 900 to 1152px and 2 on phones are set in the media queries below. */
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   grid-auto-flow: dense;
   gap: clamp(14px, 2vw, 22px);
+  touch-action: pan-y;
 }
 .work {
   position: relative;
@@ -579,7 +590,14 @@ input, select, button, textarea { font-family: 'Archivo', sans-serif; }
 .work__title { text-transform: uppercase; color: var(--cream); }
 .work__num { color: var(--blue-light); }
 .works-cta {
+  position: relative;
+  overflow: hidden;
   grid-column: span 2;
+  /* Exactly one row tall, like the photos beside it: (2c + g) / c for the column width c the
+     4-column grid has between 1153px and full width. Within half a pixel across that range;
+     without it the grid splits the shortfall between two rows and the gap above grows. */
+  aspect-ratio: 2.09;
+  box-sizing: border-box;   /* the ratio must include the padding and border */
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -591,6 +609,71 @@ input, select, button, textarea { font-family: 'Archivo', sans-serif; }
 }
 .works-cta__text { font-weight: 600; font-size: clamp(17px, 1.8vw, 20px); letter-spacing: -0.01em; color: var(--cream); }
 .works-cta__btn { padding: 12px 22px; font-size: 12px; }
+.works-cta__flip { padding: 6px 0; }
+
+/* Two pages per tile; js/ui.js swaps them while the wipe covers the tile */
+.work__page { position: absolute; inset: 0; margin: 0; }
+.work__page:not(.is-current) { visibility: hidden; }
+.work__wipe {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  box-sizing: border-box;
+  background: var(--navy);
+  border-top: 2px solid var(--blue-bright);
+  border-bottom: 2px solid var(--blue-bright);
+  visibility: hidden;   /* js/ui.js shows it, parked above the tile, before the first flip */
+  pointer-events: none;
+}
+
+/* Pager: tabs with a sliding underline, plus square arrows like the footer social links */
+.pager { display: flex; align-items: flex-end; flex-wrap: wrap; gap: 16px 28px; }
+.pager__tabs { position: relative; display: flex; gap: 22px; }
+.pager__tab {
+  padding: 0 0 12px;
+  background: none;
+  border: none;
+  border-radius: 0;
+  color: var(--blue-light);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+.pager__tab:hover,
+.pager__tab[aria-selected="true"] { color: var(--cream); }
+.pager__num { margin-right: 7px; opacity: 0.6; }
+.pager__ink {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 0;
+  height: 2px;
+  background: var(--blue-bright);
+  transition: left 0.4s var(--ease-out), width 0.4s var(--ease-out);
+}
+.pager__arrows { display: flex; gap: 8px; }
+.pager__arrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  box-sizing: border-box;
+  background: var(--navy);
+  border: 1.5px solid var(--blue);
+  border-radius: 0;
+  color: var(--blue-light);
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease, opacity 0.2s ease;
+}
+.pager__arrow svg { width: 18px; height: 18px; }
+.pager__arrow:hover:not(:disabled) { background: var(--blue-bright); color: var(--navy-deep); }
+.pager__arrow:disabled { opacity: 0.35; cursor: default; }
 
 /* More proof (Google reviews) */
 
@@ -882,6 +965,14 @@ input, select, button, textarea { font-family: 'Archivo', sans-serif; }
   .quote-bar__btn { padding-right: calc(var(--pipe-x) - var(--bar-logo-ink) / 2 - var(--bar-border)); }
 }
 
+/* Three columns between the phone and the full desktop grid: the quote tile becomes a
+   square so the 15 cells fill five rows without a hole */
+@media (min-width: 900px) and (max-width: 1152px) {
+  .works-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .works-cta { grid-column: span 1; aspect-ratio: 1; padding: 20px; }
+  .works-cta__text { font-size: 16px; }
+}
+
 @media (max-width: 899px) {
   :root { --pipe-x: 24px; }
   .desktop-only { display: none !important; }
@@ -905,9 +996,16 @@ input, select, button, textarea { font-family: 'Archivo', sans-serif; }
 
   .works-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-flow: row; gap: 10px; }
   .work--wide { grid-row: auto; aspect-ratio: 16 / 10; }
+  .works-cta { aspect-ratio: auto; }   /* alone in its row: content height, gaps already even */
   /* Swap 05 and 06 so the two-column grid packs without a hole */
   .work--swap-late { order: 1; }
   .work--tail { order: 2; }
+
+  .works__head { gap: 22px 0; margin-bottom: 28px; }
+  .pager { width: 100%; justify-content: space-between; gap: 14px; }
+  .pager__tabs { gap: 14px; }
+  .pager__num { display: none; }
+  .pager__arrow { width: 40px; height: 40px; }
 
   .reviews:not(.is-expanded) .review--extra { display: none; }
 

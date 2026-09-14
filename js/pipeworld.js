@@ -1,7 +1,7 @@
 /* Creekside Plumbing & Gas — scroll-driven pipe illustration
    A pipe runs from the hero down the page; water fills it as you scroll, a wrench
    repairs a broken joint between Services and Our works, a branch feeds a shower,
-   and the line ends at a dripping tap above the footer mouse.
+   and the line ends at a dripping tap above the footer duck.
    Geometry is measured from the page, so the whole SVG is rebuilt whenever the
    layout changes. Without GSAP (or with reduced motion) it renders fully assembled. */
 (function () {
@@ -226,11 +226,14 @@
     joint.appendChild(drips);
     // Placement lives on the outer group: GSAP rewrites the transform of the element it tweens
     const wrenchPos = mk('g', { transform: 'translate(' + (XL - 42 * S) + ',' + (fACy - 67 * S) + ') scale(' + S + ')' });
-    const wrench = mk('g', { opacity: 0, fill: 'none', stroke: '#6FA8DC', 'stroke-linecap': 'round', 'stroke-linejoin': 'round' });
-    wrench.appendChild(P('M56,56 C64,56 70,61 70,67 C70,73 64,78 56,78 L54,78 L54,84 L34,84 L34,73 L48,73 L48,61 L34,61 L34,50 L54,50 L54,56 Z', 2, '#6FA8DC'));
-    wrench.appendChild(P('M70,63 L182,74 C188,75 188,83 182,84 L70,71 Z', 2, '#6FA8DC'));
-    wrench.appendChild(P('M76,66 L176,77', 0.8, '#6FA8DC'));
-    wrench.appendChild(P('M88,64 l0,9 M102,65 l0,9 M116,66 l0,9 M130,67 l0,9 M144,68 l0,9', 0.7, '#6FA8DC'));
+    // Adjustable wrench in the local frame of wrenchPos (flange centre at 42,67): the jaw drops
+    // over the pipe from above and rests on the flange, the throat (x 34-50) gripping the
+    // 15-wide pipe on its axis x = 42. Head 36 x 34, handle 112 long: real wrench proportions.
+    const wrench = mk('g', { opacity: 0, fill: 'none', stroke: '#6FA8DC', 'stroke-linejoin': 'round', 'stroke-linecap': 'round' });
+    wrench.appendChild(P('M24,64.5 V33 A3,3 0 0 1 27,30 H57 A3,3 0 0 1 60,33 L165,32 A7,7 0 0 1 165,46 L60,46 V64.5 H50 V44 H34 V64.5 Z', 1.8, '#6FA8DC'));
+    wrench.appendChild(mk('rect', { x: 38, y: 34, width: 18, height: 6, rx: 3, 'stroke-width': 0.9 }));   // worm screw
+    wrench.appendChild(P('M43.5,34.6 l-1.4,4.8 M47.5,34.6 l-1.4,4.8 M51.5,34.6 l-1.4,4.8', 0.7, '#6FA8DC')); // its knurl
+    wrench.appendChild(mk('circle', { cx: 165, cy: 39, r: 2.2, 'stroke-width': 0.9 }));                  // hanging hole
     wrenchPos.appendChild(wrench);
     joint.appendChild(wrenchPos); svg.appendChild(joint);
     flange(XL, yB - FL / 2 - 0.3, 0, false);
@@ -285,7 +288,7 @@
       onUpdate: function () { repairP = this.progress(); }
     });
     tl.to(joint, { y: -(GAP + FL), duration: 0.3 }, 0)
-      .fromTo(wrench, { x: 130, y: -40, rotation: -70, opacity: 1, transformOrigin: '15% 50%' }, { x: 0, y: 0, rotation: 0, opacity: 1, duration: 0.3, ease: 'power2.out' }, 0.08)
+      .fromTo(wrench, { x: 130, y: -40, rotation: -70, opacity: 1, transformOrigin: '12% 70%' }, { x: 0, y: 0, rotation: 0, opacity: 1, duration: 0.3, ease: 'power2.out' }, 0.08)
       .to(wrench, { rotation: 26, duration: 0.28, ease: 'power1.inOut' }, 0.42)
       .to(joint, { y: 0, duration: 0.28, ease: 'power1.inOut' }, 0.42)
       .to(tailPs, { strokeDashoffset: 0, duration: 0.28, ease: 'power1.inOut' }, 0.42)
@@ -413,7 +416,7 @@
     G.ticker.add(tickFn);
   }
 
-  /* ---------- Footer mouse: a drip lands on it once, then an idle loop ---------- */
+  /* ---------- Footer duck (data-mouse hooks): a drip lands on it once, then an idle loop ---------- */
 
   function setupMouse() {
     if (!animated) return;

@@ -6,3 +6,5 @@ node_modules/
 *.log
 .DS_Store
 Thumbs.db
+# Camera originals, converted into assets/w9-w16.webp
+new images/

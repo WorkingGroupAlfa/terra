@@ -229,6 +229,137 @@
     });
   }
 
+  /* ---------- Our works pager ---------- */
+  // Two pages share one grid, so the section never changes height (the pipe is measured from
+  // it). A navy wipe with a bright edge sweeps each tile, top to bottom going forward and
+  // bottom to top going back; the pages swap while the tile is covered.
+
+  const worksPager = $('[data-works-pager]');
+  const worksGrid = $('[data-works-grid]');
+  if (worksPager && worksGrid) {
+    const PAGES = 2;
+    const FLIP_LABEL = { 1: 'Next: the crew on the tools \u2192', 2: '\u2190 Back to finished jobs' };
+    const tabs = $$('[data-page-to]', worksPager);
+    const ink = $('[data-pager-ink]', worksPager);
+    const prevBtn = $('[data-page-step="-1"]', worksPager);
+    const nextBtn = $('[data-page-step="1"]', worksPager);
+    const status = $('[data-pager-status]', worksPager);
+    const flip = $('[data-works-flip]', worksGrid);
+    const tiles = $$('[data-tile]', worksGrid);
+    const wipes = $$('[data-wipe]', worksGrid);
+    let page = 1;
+    let busy = false;
+    let wipesReady = false;
+
+    const placeInk = () => {
+      const t = tabs.find(b => Number(b.dataset.pageTo) === page);
+      if (!t) return;
+      ink.style.left = t.offsetLeft + 'px';
+      ink.style.width = t.offsetWidth + 'px';
+    };
+
+    const showPage = (tile, p) => {
+      $$('[data-page]', tile).forEach(el => el.classList.toggle('is-current', Number(el.dataset.page) === p));
+      if (flip && tile.contains(flip)) flip.textContent = FLIP_LABEL[p];
+    };
+
+    const syncControls = () => {
+      tabs.forEach(t => {
+        const on = Number(t.dataset.pageTo) === page;
+        t.setAttribute('aria-selected', String(on));
+        t.tabIndex = on ? 0 : -1;
+      });
+      prevBtn.disabled = page === 1;
+      nextBtn.disabled = page === PAGES;
+      placeInk();
+      const tab = tabs[page - 1];
+      status.textContent = 'Page ' + page + ' of ' + PAGES + (tab ? ': ' + tab.textContent.replace(/^\d+\s*/, '').trim() : '');
+    };
+
+    // Tiles in the order they appear on screen (mobile reorders two of them with CSS)
+    const byPosition = () => tiles.slice().sort((a, b) => {
+      const ra = a.getBoundingClientRect(), rb = b.getBoundingClientRect();
+      return (ra.top - rb.top) || (ra.left - rb.left);
+    });
+
+    function goTo(p) {
+      if (busy || p < 1 || p > PAGES || p === page) return;
+      const dir = p > page ? 1 : -1;
+      page = p;
+      syncControls();
+      const G = window.gsap;
+      if (reduced || !G) { tiles.forEach(t => showPage(t, p)); return; }
+      busy = true;
+      // GSAP owns the wipe transform from here on; CSS keeps it hidden until then
+      if (!wipesReady) { G.set(wipes, { yPercent: -102, visibility: 'visible' }); wipesReady = true; }
+      const tl = G.timeline({ onComplete: () => { busy = false; } });
+      byPosition().forEach((tile, i) => {
+        const wipe = $('[data-wipe]', tile);
+        if (!wipe) return;
+        const at = i * 0.045;
+        tl.fromTo(wipe, { yPercent: -102 * dir }, { yPercent: 0, duration: 0.26, ease: 'power2.in' }, at)
+          .call(showPage, [tile, p], at + 0.26)
+          .to(wipe, { yPercent: 102 * dir, duration: 0.3, ease: 'power2.out' }, at + 0.26);
+      });
+    }
+
+    worksPager.addEventListener('click', (e) => {
+      const btn = e.target.closest('button');
+      if (!btn) return;
+      if (btn.dataset.pageTo) goTo(Number(btn.dataset.pageTo));
+      else if (btn.dataset.pageStep) goTo(page + Number(btn.dataset.pageStep));
+    });
+    if (flip) flip.addEventListener('click', () => goTo(page === PAGES ? 1 : page + 1));
+
+    // Left/right arrow keys move between the tabs
+    $('[role="tablist"]', worksPager).addEventListener('keydown', (e) => {
+      if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+      e.preventDefault();
+      goTo(page + (e.key === 'ArrowRight' ? 1 : -1));
+      const t = tabs.find(b => Number(b.dataset.pageTo) === page);
+      if (t) t.focus();
+    });
+
+    // Horizontal swipe on touch screens; vertical panning stays native (touch-action: pan-y)
+    let swipe = null;
+    worksGrid.addEventListener('pointerdown', (e) => {
+      if (e.pointerType !== 'touch') return;
+      swipe = { id: e.pointerId, x: e.clientX, y: e.clientY };
+    }, { passive: true });
+    worksGrid.addEventListener('pointerup', (e) => {
+      if (!swipe || e.pointerId !== swipe.id) return;
+      const dx = e.clientX - swipe.x, dy = e.clientY - swipe.y;
+      swipe = null;
+      if (Math.abs(dx) > 48 && Math.abs(dx) > Math.abs(dy) * 1.5) goTo(page + (dx < 0 ? 1 : -1));
+    }, { passive: true });
+    worksGrid.addEventListener('pointercancel', () => { swipe = null; });
+
+    window.addEventListener('resize', placeInk, { passive: true });
+    (document.fonts ? document.fonts.ready : Promise.resolve()).then(placeInk);
+    syncControls();
+
+    if ('IntersectionObserver' in window) {
+      // Fetch the second page's photos once the grid is near, so the first flip has nothing to wait for
+      const preload = new IntersectionObserver((entries) => {
+        if (!entries.some(en => en.isIntersecting)) return;
+        preload.disconnect();
+        $$('[data-page="2"] img', worksGrid).forEach(img => { img.loading = 'eager'; });
+      }, { rootMargin: '600px 0px' });
+      preload.observe(worksGrid);
+
+      // On phones, nudge the next arrow once when the grid comes into view
+      if (!reduced && window.matchMedia('(max-width: 899px)').matches) {
+        const hint = new IntersectionObserver((entries) => {
+          if (!entries.some(en => en.isIntersecting)) return;
+          hint.disconnect();
+          const G = window.gsap;
+          if (G && page === 1) G.to(nextBtn, { x: 6, duration: 0.16, repeat: 5, yoyo: true, ease: 'sine.inOut', delay: 0.6 });
+        }, { threshold: 0.25 });
+        hint.observe(worksGrid);
+      }
+    }
+  }
+
   /* ---------- Reveal on scroll ---------- */
 
   if (!reduced && 'IntersectionObserver' in window) {
