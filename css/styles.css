@@ -554,6 +554,8 @@ input, select, button, textarea { font-family: 'Archivo', sans-serif; }
   touch-action: pan-y;
 }
 .work {
+  /* Fill both grid axes when the bathroom tile makes its rows taller. */
+  place-self: stretch;
   position: relative;
   margin: 0;
   aspect-ratio: 1 / 1;
@@ -562,6 +564,7 @@ input, select, button, textarea { font-family: 'Archivo', sans-serif; }
   border: 1px solid rgba(237, 232, 222, 0.22);
 }
 .work--wide { grid-column: span 2; grid-row: span 2; }
+.work--bathroom { aspect-ratio: 4 / 5; }
 .work img {
   position: absolute;
   inset: 0;
@@ -588,7 +591,6 @@ input, select, button, textarea { font-family: 'Archivo', sans-serif; }
   pointer-events: none;
 }
 .work__title { text-transform: uppercase; color: var(--cream); }
-.work__num { color: var(--blue-light); }
 .works-cta {
   position: relative;
   overflow: hidden;
@@ -614,6 +616,11 @@ input, select, button, textarea { font-family: 'Archivo', sans-serif; }
 /* Two pages per tile; js/ui.js swaps them while the wipe covers the tile */
 .work__page { position: absolute; inset: 0; margin: 0; }
 .work__page:not(.is-current) { visibility: hidden; }
+/* Keep the shower head in view and leave the basin rim clear of its caption. */
+.work .work__image--bathroom { object-position: 50% 55%; }
+.work__page--basin { display: grid; grid-template-rows: minmax(0, 1fr) auto; }
+.work__page--basin img { position: static; min-height: 0; object-position: 50% 100%; }
+.work__page--basin figcaption { position: static; }
 .work__wipe {
   position: absolute;
   inset: 0;
@@ -645,7 +652,6 @@ input, select, button, textarea { font-family: 'Archivo', sans-serif; }
 }
 .pager__tab:hover,
 .pager__tab[aria-selected="true"] { color: var(--cream); }
-.pager__num { margin-right: 7px; opacity: 0.6; }
 .pager__ink {
   position: absolute;
   left: 0;
@@ -996,6 +1002,7 @@ input, select, button, textarea { font-family: 'Archivo', sans-serif; }
 
   .works-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-flow: row; gap: 10px; }
   .work--wide { grid-row: auto; aspect-ratio: 16 / 10; }
+  .work--bathroom { aspect-ratio: 4 / 5; }
   .works-cta { aspect-ratio: auto; }   /* alone in its row: content height, gaps already even */
   /* Swap 05 and 06 so the two-column grid packs without a hole */
   .work--swap-late { order: 1; }
@@ -1004,7 +1011,6 @@ input, select, button, textarea { font-family: 'Archivo', sans-serif; }
   .works__head { gap: 22px 0; margin-bottom: 28px; }
   .pager { width: 100%; justify-content: space-between; gap: 14px; }
   .pager__tabs { gap: 14px; }
-  .pager__num { display: none; }
   .pager__arrow { width: 40px; height: 40px; }
 
   .reviews:not(.is-expanded) .review--extra { display: none; }

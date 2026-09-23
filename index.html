@@ -407,8 +407,8 @@
       <!-- Two pages of the same grid: finished jobs, then the crew at work. Shown by js/ui.js. -->
       <div class="pager" data-works-pager>
         <div class="pager__tabs" role="tablist" aria-label="Our works pages">
-          <button type="button" class="pager__tab" role="tab" id="works-tab-1" aria-selected="true" aria-controls="works-grid" data-page-to="1"><span class="pager__num" aria-hidden="true">01</span>Finished jobs</button>
-          <button type="button" class="pager__tab" role="tab" id="works-tab-2" aria-selected="false" aria-controls="works-grid" data-page-to="2" tabindex="-1"><span class="pager__num" aria-hidden="true">02</span>On the tools</button>
+          <button type="button" class="pager__tab" role="tab" id="works-tab-1" aria-selected="true" aria-controls="works-grid" data-page-to="1">Finished jobs</button>
+          <button type="button" class="pager__tab" role="tab" id="works-tab-2" aria-selected="false" aria-controls="works-grid" data-page-to="2" tabindex="-1">On the tools</button>
           <span class="pager__ink" data-pager-ink aria-hidden="true"></span>
         </div>
         <div class="pager__arrows">
@@ -425,91 +425,91 @@
 
     <!-- Each tile holds both pages; the wipe layer sweeps over it while they swap -->
     <div id="works-grid" class="works-grid" data-works-grid>
-      <div class="work work--wide" data-reveal data-tile>
+      <div class="work work--wide work--bathroom" data-reveal data-tile>
         <figure class="work__page is-current" data-page="1">
-          <img src="assets/w1.webp" alt="Bathroom renovation" loading="lazy">
-          <figcaption><span class="work__title">Bathroom renovation</span><span class="work__num">01</span></figcaption>
+          <img class="work__image--bathroom" src="assets/w19.webp" alt="Renovated bathroom with a timber vanity, toilet and glass shower screen" loading="lazy">
+          <figcaption><span class="work__title">Bathroom fit-off</span></figcaption>
         </figure>
         <figure class="work__page" data-page="2">
           <img src="assets/w9.webp" alt="Two Creekside plumbers connecting a rainwater tank beside a brick wall" loading="lazy" style="object-position: 50% 30%">
-          <figcaption><span class="work__title">Rainwater tank hook-up</span><span class="work__num">09</span></figcaption>
+          <figcaption><span class="work__title">Rainwater tank hook-up</span></figcaption>
         </figure>
         <span class="work__wipe" data-wipe aria-hidden="true"></span>
       </div>
       <div class="work" data-reveal data-tile>
-        <figure class="work__page is-current" data-page="1">
-          <img src="assets/w2.webp" alt="Stormwater and drainage work" loading="lazy">
-          <figcaption><span class="work__title">Stormwater &amp; drainage</span><span class="work__num">02</span></figcaption>
+        <figure class="work__page work__page--basin is-current" data-page="1">
+          <img src="assets/w20.webp" alt="White countertop basin with a matte black wall-mounted spout and mixer" loading="lazy">
+          <figcaption><span class="work__title">Basin &amp; tapware</span></figcaption>
         </figure>
         <figure class="work__page" data-page="2">
           <img src="assets/w10.webp" alt="Plumber&rsquo;s hands fitting a brass valve" loading="lazy" style="object-position: 50% 50%">
-          <figcaption><span class="work__title">Brass fitting, by hand</span><span class="work__num">10</span></figcaption>
+          <figcaption><span class="work__title">Brass fitting, by hand</span></figcaption>
         </figure>
         <span class="work__wipe" data-wipe aria-hidden="true"></span>
       </div>
       <div class="work" data-reveal data-tile>
         <figure class="work__page is-current" data-page="1">
           <img src="assets/w3.webp" alt="Gas heater installation" loading="lazy">
-          <figcaption><span class="work__title">Gas heater install</span><span class="work__num">03</span></figcaption>
+          <figcaption><span class="work__title">Gas heater install</span></figcaption>
         </figure>
         <figure class="work__page" data-page="2">
           <img src="assets/w11.webp" alt="Plumber chasing a brick wall for new pipework" loading="lazy" style="object-position: 50% 35%">
-          <figcaption><span class="work__title">Chasing in new pipe</span><span class="work__num">11</span></figcaption>
+          <figcaption><span class="work__title">Chasing in new pipe</span></figcaption>
         </figure>
         <span class="work__wipe" data-wipe aria-hidden="true"></span>
       </div>
       <div class="work" data-reveal data-tile>
         <figure class="work__page is-current" data-page="1">
           <img src="assets/w17.webp" alt="Water storage tanks and pump system installed on a rural block" loading="lazy" style="object-position: 50% 50%">
-          <figcaption><span class="work__title">Tank &amp; pump system</span><span class="work__num">04</span></figcaption>
+          <figcaption><span class="work__title">Tank &amp; pump system</span></figcaption>
         </figure>
         <figure class="work__page" data-page="2">
           <img src="assets/w12.webp" alt="Plumber measuring up a stripped bathroom floor" loading="lazy" style="object-position: 50% 55%">
-          <figcaption><span class="work__title">Setting out the rough-in</span><span class="work__num">12</span></figcaption>
+          <figcaption><span class="work__title">Setting out the rough-in</span></figcaption>
         </figure>
         <span class="work__wipe" data-wipe aria-hidden="true"></span>
       </div>
       <div class="work work--wide work--swap-late" data-reveal data-tile>
         <figure class="work__page is-current" data-page="1">
           <img src="assets/w5.webp" alt="Full bathroom fit-out" loading="lazy">
-          <figcaption><span class="work__title">Bathroom fit-out</span><span class="work__num">05</span></figcaption>
+          <figcaption><span class="work__title">Bathroom fit-out</span></figcaption>
         </figure>
         <figure class="work__page" data-page="2">
           <img src="assets/w13.webp" alt="Creekside our excavator loaded on a trailer" loading="lazy" style="object-position: 50% 50%">
-          <figcaption><span class="work__title">Our excavator, ready to roll</span><span class="work__num">13</span></figcaption>
+          <figcaption><span class="work__title">Our excavator, ready to roll</span></figcaption>
         </figure>
         <span class="work__wipe" data-wipe aria-hidden="true"></span>
       </div>
       <div class="work" data-reveal data-tile>
         <figure class="work__page is-current" data-page="1">
           <img src="assets/w6.webp" alt="New build plumbing rough-in" loading="lazy">
-          <figcaption><span class="work__title">New build rough-in</span><span class="work__num">06</span></figcaption>
+          <figcaption><span class="work__title">New build rough-in</span></figcaption>
         </figure>
         <figure class="work__page" data-page="2">
           <img src="assets/w14.webp" alt="Plumber fixing a copper pipe run to a brick wall" loading="lazy" style="object-position: 50% 30%">
-          <figcaption><span class="work__title">Copper run on brick</span><span class="work__num">14</span></figcaption>
+          <figcaption><span class="work__title">Copper run on brick</span></figcaption>
         </figure>
         <span class="work__wipe" data-wipe aria-hidden="true"></span>
       </div>
       <div class="work work--tail" data-reveal data-tile>
         <figure class="work__page is-current" data-page="1">
-          <img src="assets/w7.webp" alt="Shower and tapware installation" loading="lazy">
-          <figcaption><span class="work__title">Shower &amp; tapware</span><span class="work__num">07</span></figcaption>
+          <img src="assets/w21.webp" alt="Matte black shower mixer beside a glass screen and tiled bathroom wall" loading="lazy" style="object-position: 50% 60%">
+          <figcaption><span class="work__title">Shower mixer install</span></figcaption>
         </figure>
         <figure class="work__page" data-page="2">
           <img src="assets/w15.webp" alt="Creekside ute with the tray open on site" loading="lazy" style="object-position: 50% 50%">
-          <figcaption><span class="work__title">Loaded for the day</span><span class="work__num">15</span></figcaption>
+          <figcaption><span class="work__title">Loaded for the day</span></figcaption>
         </figure>
         <span class="work__wipe" data-wipe aria-hidden="true"></span>
       </div>
       <div class="work work--tail" data-reveal data-tile>
         <figure class="work__page is-current" data-page="1">
           <img src="assets/w18.webp" alt="Kitchen sink with a brass gooseneck mixer tap on a marble benchtop" loading="lazy" style="object-position: 50% 45%">
-          <figcaption><span class="work__title">Kitchen tapware</span><span class="work__num">08</span></figcaption>
+          <figcaption><span class="work__title">Kitchen tapware</span></figcaption>
         </figure>
         <figure class="work__page" data-page="2">
           <img src="assets/w16.webp" alt="Creekside truck and excavator with a crew member on site" loading="lazy" style="object-position: 50% 60%">
-          <figcaption><span class="work__title">The crew and the fleet</span><span class="work__num">16</span></figcaption>
+          <figcaption><span class="work__title">The crew and the fleet</span></figcaption>
         </figure>
         <span class="work__wipe" data-wipe aria-hidden="true"></span>
       </div>

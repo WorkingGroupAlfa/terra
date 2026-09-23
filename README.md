@@ -4,8 +4,10 @@ Static website built with HTML, CSS and JavaScript. Includes a quote wizard,
 job application form, two-page project gallery (finished jobs and the crew at
 work), reviews, FAQ and privacy policy.
 
-Gallery photos are `assets/w1-w18.webp` (w4 and w8 are no longer used). The camera
-originals for w9-w18 live in `new images/`, which is git-ignored and not part of the deploy.
+Gallery photos are `assets/w1-w21.webp` (w1, w2, w4, w7 and w8 are no longer used).
+The camera originals for w9-w18 live in `new images/`; originals for w19-w21
+live in `images 2/` (DSCF0030, DSCF0061 and DSCF0032 respectively). Both folders
+are git-ignored and not part of the deploy.
 
 ## Local preview
 
