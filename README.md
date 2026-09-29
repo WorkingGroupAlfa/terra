@@ -14,6 +14,14 @@ are git-ignored and not part of the deploy.
 Run `python -m http.server 3000` from the project root, then open
 http://localhost:3000. No dependency installation or build is required.
 
+The photo-background variant is at http://localhost:3000/v2/ (or `/v2/` on
+the deployed site). `v2/index.html` copies the current homepage and shares its
+CSS, JavaScript, gallery and video assets. Only `v2/styles.css` adds the hero
+photo treatment. It uses the original `v2/pc_cut.JPG` on desktop and
+`v2/phone.JPG` below 900px, with proportional cropping and no image blur.
+The photo height is bounded independently of the form; the original homepage
+at `/` keeps its existing background.
+
 ## Deploy to Vercel
 
 Import `WorkingGroupAlfa/terra` and use the repository root as the Root Directory.
@@ -23,7 +31,10 @@ The production branch is `master`.
 and building, and serves files directly from the repository root. It overrides
 the previous site's Vite build settings.
 
-The main page is `/`; the privacy policy is `/privacy.html`.
+The original homepage is `/`; the photo variant is `/v2/` (also `/v2`).
+Explicit Vercel rewrites serve `v2/index.html` at both variant URLs. Photo and
+variant stylesheet URLs are rooted at `/v2/` so they resolve with or without
+a trailing slash. The privacy policy is `/privacy.html`.
 
 ## Configuration still needed
 

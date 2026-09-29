@@ -100,10 +100,22 @@
     const yEnd = pg(msc).top + 3;
     const R = m ? 0 : 34;
 
-    // Paths
+    // Side inlet: a horizontal connection at the viewport edge, then a tangent
+    // quarter-turn into the existing vertical run. Keep the entire fitting below
+    // the hero, and leave a straight neck between the flange and the bend.
+    const inletX = m ? 0 : vw;
+    const inletY = yStart + 16 * S;
+    const inletRunX = m ? XL : XR;
+    const inletR = m ? 12 : 24;
+    const inletBendX = inletRunX + (m ? -inletR : inletR);
+    const inletLength = Math.abs(inletX - inletBendX) + Math.PI * inletR / 2;
+    const inletPath = 'M' + inletX + ',' + inletY + ' H' + inletBendX +
+      ' A' + inletR + ',' + inletR + ' 0 0 ' + (m ? 1 : 0) + ' ' + inletRunX + ',' + (inletY + inletR);
+
+    // Share the inlet geometry between every body, water and interaction path.
     const seg1 = m
-      ? 'M' + XL + ',' + yStart + ' V'
-      : 'M' + XR + ',' + yStart + ' V' + (crossY - R) + ' A' + R + ',' + R + ' 0 0 1 ' + (XR - R) + ',' + crossY +
+      ? inletPath + ' V'
+      : inletPath + ' V' + (crossY - R) + ' A' + R + ',' + R + ' 0 0 1 ' + (XR - R) + ',' + crossY +
         ' H' + (XL + R) + ' A' + R + ',' + R + ' 0 0 0 ' + XL + ',' + (crossY + R) + ' V';
     const dA = seg1 + yA;
     const dW = seg1 + yEnd;
@@ -116,7 +128,8 @@
     const showerY = juncY + Rb + dropL;
 
     const svg = mk('svg', { width: vw, height: docH, viewBox: '0 0 ' + vw + ' ' + docH, 'aria-hidden': 'true' });
-    svg.style.cssText = 'display:block;overflow:visible;pointer-events:none';
+    // Round water caps and moving bubbles must not paint past the side connection.
+    svg.style.cssText = 'display:block;overflow:hidden;pointer-events:none';
     host.appendChild(svg);
 
     // Pipe bodies: outline / inner / edge / inner edge
@@ -179,7 +192,11 @@
       svg.appendChild(g);
       return g;
     };
-    flange(m ? XL : XR, yStart + 6 * S, 0, true);
+    // Half the double flange's depth (5) plus half its stroke (0.75): its outer
+    // face touches the viewport edge without a clipped stroke or a visible gap.
+    const inletInset = 5.75 * S;
+    const inletFlange = flange(m ? inletInset : vw - inletInset, inletY, m ? -90 : 90, true);
+    inletFlange.setAttribute('data-pipe-inlet', m ? 'left' : 'right');
     if (!m) { flange((XR + XL) / 2, crossY, 90, true); flange(XL, crossY + R + 46, 0, false); }
     flange(XL, ((m ? yStart + 90 : crossY + R) + yA) / 2, 0, false);
     flange(Xs - Rb - 34, juncY, 90, false);
@@ -247,11 +264,13 @@
     };
     if (!m) {
       const c1x = XR - R, c1y = crossY - R, r1 = R - 9, r2 = R - 15;
+      const firstBendLength = inletLength + (crossY - R - inletY - inletR);
+      const bendLength = Math.PI * R / 2;
       note('M' + (c1x + r1) + ',' + c1y + ' A' + r1 + ',' + r1 + ' 0 0 1 ' + c1x + ',' + (c1y + r1) +
-        ' M' + (c1x + r2) + ',' + c1y + ' A' + r2 + ',' + r2 + ' 0 0 1 ' + c1x + ',' + (c1y + r2), (crossY - yStart) + 6);
+        ' M' + (c1x + r2) + ',' + c1y + ' A' + r2 + ',' + r2 + ' 0 0 1 ' + c1x + ',' + (c1y + r2), firstBendLength + bendLength / 2);
       const c2x = XL + R, c2y = crossY + R;
       note('M' + c2x + ',' + (c2y - r1) + ' A' + r1 + ',' + r1 + ' 0 0 0 ' + (c2x - r1) + ',' + c2y +
-        ' M' + c2x + ',' + (c2y - r2) + ' A' + r2 + ',' + r2 + ' 0 0 0 ' + (c2x - r2) + ',' + c2y, (crossY - yStart) + (XR - XL) + 6);
+        ' M' + c2x + ',' + (c2y - r2) + ' A' + r2 + ',' + r2 + ' 0 0 0 ' + (c2x - r2) + ',' + c2y, firstBendLength + bendLength + (XR - XL - 2 * R) + bendLength / 2);
     }
 
     const LW = wFill.getTotalLength();
